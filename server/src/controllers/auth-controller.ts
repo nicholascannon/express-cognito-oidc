@@ -105,22 +105,29 @@ export class AuthController {
       return res.status(401).json({ message: 'Unauthorized' });
     }
 
-    const tokens = await this.openIdClient.refresh(refreshToken);
+    try {
+      const tokens = await this.openIdClient.refresh(refreshToken);
 
-    res.cookie('accessToken', tokens.access_token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 1000 * 60 * 60, // 1 hour
-    });
+      res.cookie('accessToken', tokens.access_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 1000 * 60 * 60, // 1 hour
+      });
 
-    res.cookie('idToken', tokens.id_token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 1000 * 60 * 60, // 1 hour
-    });
+      res.cookie('idToken', tokens.id_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 1000 * 60 * 60, // 1 hour
+      });
 
-    return res.redirect('/me');
+      return res.redirect('/me');
+    } catch (error) {
+      // Refresh token invalid/expired/revoked
+      console.error('Failed to refresh token:', error);
+      res.clearCookie('refreshToken');
+      return res.status(401).json({ message: 'Invalid refresh token' });
+    }
   }
 }
