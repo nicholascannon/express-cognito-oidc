@@ -1,7 +1,9 @@
 import { useMe } from './hooks/use-me';
+import { useRefresh } from './hooks/use-refresh';
 
 export function App() {
   const { me, loading } = useMe();
+  useRefresh();
 
   const login = () => {
     window.location.href = 'http://localhost:8000/auth/login';
