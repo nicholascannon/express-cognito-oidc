@@ -71,10 +71,6 @@ export class AuthController {
       maxAge: 1000 * 60 * 60 * 24 * 5, // 5 days
     });
 
-    // Decode ID token to show user info (optional)
-    const claims = tokens.claims();
-    console.log('User authenticated:', claims.email || claims.sub);
-
     return res.redirect('http://localhost:5173/');
   }
 
