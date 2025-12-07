@@ -7,8 +7,8 @@ export class AuthController {
   constructor(private readonly openIdClient: Client) {
     this.router.get('/login', this.login.bind(this));
     this.router.get('/callback', this.callback.bind(this));
-    this.router.get('/logout', this.logout.bind(this));
-    this.router.get('/refresh', this.refresh.bind(this));
+    this.router.post('/logout', this.logout.bind(this));
+    this.router.post('/refresh', this.refresh.bind(this));
   }
 
   private async login(_req: Request, res: Response) {
@@ -75,7 +75,7 @@ export class AuthController {
     const claims = tokens.claims();
     console.log('User authenticated:', claims.email || claims.sub);
 
-    return res.redirect('/me');
+    return res.redirect('http://localhost:5173/');
   }
 
   private async logout(req: Request, res: Response) {
@@ -96,10 +96,10 @@ export class AuthController {
     const domain = process.env.COGNITO_DOMAIN!;
     const clientId = process.env.COGNITO_CLIENT_ID!;
     const logoutUrl = `${domain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(
-      'http://localhost:8000/me'
+      'http://localhost:5173'
     )}`;
 
-    return res.redirect(logoutUrl);
+    return res.json({ logoutUrl });
   }
 
   private async refresh(req: Request, res: Response) {

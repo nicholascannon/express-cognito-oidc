@@ -4,12 +4,19 @@ import express, {
   type Response,
   type NextFunction,
 } from 'express';
-import { AuthController } from './controllers/auth.js';
+import cors from 'cors';
+import { AuthController } from './controllers/auth-controller.js';
 import cookieParser from 'cookie-parser';
 import { CLIENT } from './lib/open-id.js';
 import { authenticated } from './middleware/auth.js';
 
 const app = express();
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 
